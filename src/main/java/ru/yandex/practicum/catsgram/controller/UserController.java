@@ -4,10 +4,12 @@ package ru.yandex.practicum.catsgram.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.catsgram.exceptions.InvalidEmailException;
 import ru.yandex.practicum.catsgram.exceptions.UserAlreadyExistException;
 import ru.yandex.practicum.catsgram.model.User;
+import ru.yandex.practicum.catsgram.service.UserService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,10 +20,16 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final Set<User> users = new HashSet<>();
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public Set<User> getUsers() {
+        Set<User> users = userService.getUsers();
         log.debug("Количество пользователей: {}", users.size());
         return users;
     }
@@ -31,12 +39,8 @@ public class UserController {
         if (user.getEmail() == null || "".equals(user.getEmail())) {
             throw new InvalidEmailException("Invalid user email!");
         }
-        if (users.contains(user)) {
-            throw new UserAlreadyExistException("User with email = \'" + user.getEmail() + "\' already exist!");
-        }
-        log.debug("Создан пользователь: {}", user.toString());
-        users.add(user);
-        return user;
+        log.debug("Создан пользователь: {}", user);
+        return userService.createUser(user);
     }
 
     @PutMapping
@@ -44,7 +48,6 @@ public class UserController {
         if (user.getEmail() == null || "".equals(user.getEmail())) {
             throw new InvalidEmailException("Invalid user email!");
         }
-        users.add(user);
-        return user;
+        return userService.updateUser(user);
     }
 }
