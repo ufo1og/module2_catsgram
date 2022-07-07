@@ -6,13 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.catsgram.exceptions.InvalidEmailException;
-import ru.yandex.practicum.catsgram.exceptions.UserAlreadyExistException;
+import ru.yandex.practicum.catsgram.exception.InvalidEmailException;
 import ru.yandex.practicum.catsgram.model.User;
 import ru.yandex.practicum.catsgram.service.UserService;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -28,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping
-    public Set<User> getUsers() {
-        Set<User> users = userService.getUsers();
+    public List<User> getUsers() {
+        List<User> users = userService.getUsers();
         log.debug("Количество пользователей: {}", users.size());
         return users;
     }
