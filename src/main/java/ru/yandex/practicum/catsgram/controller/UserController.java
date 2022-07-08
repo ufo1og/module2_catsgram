@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.catsgram.exception.InvalidEmailException;
+import ru.yandex.practicum.catsgram.exception.UserWithEmailNotFoundException;
 import ru.yandex.practicum.catsgram.model.User;
 import ru.yandex.practicum.catsgram.service.UserService;
 
@@ -47,5 +48,14 @@ public class UserController {
             throw new InvalidEmailException("Invalid user email!");
         }
         return userService.updateUser(user);
+    }
+
+    @GetMapping("/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        User user = userService.findUserByEmail(email);
+        if (user == null) {
+            throw new UserWithEmailNotFoundException();
+        }
+        return user;
     }
 }

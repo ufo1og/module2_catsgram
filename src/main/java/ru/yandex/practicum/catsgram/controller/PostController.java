@@ -3,10 +3,9 @@ package ru.yandex.practicum.catsgram.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.catsgram.exception.PostNotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
 
@@ -33,5 +32,15 @@ public class PostController {
     public Post create(@RequestBody Post post) {
         log.debug("Создан пользователь: {}", post.toString());
         return postService.create(post);
+    }
+
+    @GetMapping("/posts/{id}")
+    public Post getPostByID(@PathVariable String id) {
+        int postId = Integer.parseInt(id);
+        Post post = postService.getPost(postId);
+        if (post == null) {
+            throw new PostNotFoundException();
+        }
+        return post;
     }
 }
